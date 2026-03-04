@@ -12,9 +12,11 @@ app.use(express.json());
 
 // Import the user routes module containing all /testUsers endpoint handlers
 const userRoutes = require("./routes/userRoutes");
+const testRoutes = require("./routes/testRoutes")
 
 // Mount user routes — all requests to /testUsers will be handled by userRoutes
 app.use("/testUsers", userRoutes);
+app.ust("test", testRoutes)
 
 // Read the port number from environment variables (defined in .env)
 const port = process.env.PORT;
