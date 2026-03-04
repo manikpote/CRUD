@@ -16,7 +16,7 @@ const testRoutes = require("./routes/testRoutes")
 
 // Mount user routes — all requests to /testUsers will be handled by userRoutes
 app.use("/testUsers", userRoutes);
-app.ust("test", testRoutes)
+app.use("test", testRoutes)
 
 // Read the port number from environment variables (defined in .env)
 const port = process.env.PORT;
