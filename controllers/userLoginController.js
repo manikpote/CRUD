@@ -1,11 +1,9 @@
 const conn = require("../db/db");
+const bcrypt = require("bcrypt");
 
 exports.login = (req, res) => {
-
-    console.log("Request body:", req.body)
-  const userName = req.body[0].userName;
-  const password = req.body[0].password;
-
+  console.log("Request body:", req.body);
+  const { userName, password } = req.body;
 
   if (!userName || !password) {
     return res?.status(402).json({
@@ -15,10 +13,9 @@ exports.login = (req, res) => {
   }
 
   const userCredentials =
-    "Select u.name from users u where lower(u.name) ilike lower($1)";
-
-  conn.query(userCredentials, [userName], (err, result) => {
-    console.log(err)
+    "Select u.name, u.password from users u where lower(u.name) ilike lower($1)";
+  conn.query(userCredentials, [userName], async (err, result) => {
+    console.log(err);
     if (err) {
       return res?.status(500).json({
         status: "failure",
@@ -32,16 +29,18 @@ exports.login = (req, res) => {
         message: "No user found",
       });
     }
-    if (userName?.toLowerCase() == result?.rows[0]?.name?.toLowerCase()) {
-      return res?.status(200).json({
-        status: "success",
-        message: "Login success",
-      });
-    } else {
-      return res?.status(500).json({
-        status: "failure",
-        message: "Something went wrong",
-      });
+
+    try {
+      console.log("usercredentialspassword", userCredentials);
+      if (await bcrypt.compare(password, result?.rows[0]?.password)) {
+        return res?.status(200).json({
+          status: "success",
+          message: "Login success",
+        });
+      }
+    } catch (e) {
+      console.log("Error comparing passwords:", e);
+      return res?.status(500).send("Internal server error");
     }
   });
 };
