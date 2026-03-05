@@ -52,7 +52,7 @@ exports.postUser = async (req, res) => {
     const salt = await bcrypt.genSalt();
     const hashedPass = await bcrypt.hash(password, salt)
 
-    conn.query(post_query, [userName, hashedPass, email, age, password], (err, result) => {
+    conn.query(post_query, [userName.toLowerCase(), hashedPass, email, age, password], (err, result) => {
       if (err) {
         return res.status(500).json({
           success: "false",
