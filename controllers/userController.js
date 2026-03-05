@@ -1,4 +1,5 @@
 const conn = require("../db/db");
+const bcrypt = require("bcrypt");
 
 exports.getAllUsers = (req, res) => {
   // Query to fetch all rows from the users table
@@ -42,23 +43,30 @@ exports.getUserById = (req, res) => {
   });
 };
 
-exports.postUser = (req, res) => {
-  const { name, email, age } = req.body;
+exports.postUser = async (req, res) => {
+  const { userName, password, email, age } = req.body;
 
-  const post_query = "insert into users (name, email, age) values ($1,$2,$3)";
+  const post_query =
+    "insert into users (name,password, email, age, unhased_password) values ($1,$2,$3, $4, $5)";
+  try {
+    const salt = await bcrypt.genSalt();
+    const hashedPass = await bcrypt.hash(password, salt)
 
-  conn.query(post_query, [name, email, age], (err, result) => {
-    if (err) {
-      return res.status(500).json({
-        success: "false",
-        message: err,
+    conn.query(post_query, [userName, hashedPass, email, age, password], (err, result) => {
+      if (err) {
+        return res.status(500).json({
+          success: "false",
+          message: err,
+        });
+      }
+      res.status(201).json({
+        success: "true",
+        message: "New user successfully inserted",
       });
-    }
-    res.status(201).json({
-      success: "true",
-      message: "New user successfully inserted",
     });
-  });
+  } catch {
+    res.status(500).send("something went wrong");
+  }
 };
 
 exports.updateUser = (req, res) => {
@@ -69,7 +77,7 @@ exports.updateUser = (req, res) => {
 
   conn.query(update_query, [name, age, email, id], (err, result) => {
     console.log(result);
-    if(result.rows.length == 0){
+    if (result.rows.length == 0) {
       return res.status(404).json({
         success: "false",
         message: `User with id ${id} not found`,

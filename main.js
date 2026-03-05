@@ -15,8 +15,8 @@ const userRoutes = require("./routes/userRoutes");
 const testRoutes = require("./routes/testRoutes");
 const userLoginRoutes = require("./routes/userLoginRoutes")
 
-// Mount user routes — all requests to /testUsers will be handled by userRoutes
-app.use("/testUsers", userRoutes);
+// Mount user routes — all requests to /users will be handled by userRoutes
+app.use("/users", userRoutes);
 app.use("/login", userLoginRoutes);
 app.use("/test", testRoutes)
 
