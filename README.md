@@ -6,3 +6,6 @@ Proper folder structures implemented where
   routes of the api are defined inside of routes folder 
   postgre db is defined inside of db folder with host, password, etc. defined in env file
   api logic's are defined inside of the controller folder
+
+Day 3
+User login api creation and also bcrypt implemented for password hashing 
